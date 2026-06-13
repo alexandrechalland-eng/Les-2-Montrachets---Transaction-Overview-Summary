@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opération H2O — Transaction Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;padding:32px 24px}
+
+.page{max-width:1280px;margin:0 auto}
+
+/* HEADER */
+.header{background:#1a3a5c;border-radius:12px;padding:24px 32px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.header-left h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.3}
+.header-left p{font-size:12px;color:rgba(255,255,255,.65);margin-top:5px;max-width:640px;line-height:1.5}
+.header-right{text-align:right;flex-shrink:0;margin-left:24px}
+.header-right .big{font-size:28px;font-weight:700;color:#fff}
+.header-right .sm{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+.conf-badge{display:inline-block;background:rgba(255,80,80,.18);border:1px solid rgba(255,80,80,.4);color:#ff9090;font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-top:8px}
+
+/* MAIN GRID */
+.grid-top{display:grid;grid-template-columns:280px 1fr;gap:16px;margin-bottom:16px;align-items:start}
+.grid-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* CARDS */
+.card{background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#1a3a5c;padding:4px 10px;border-radius:4px;display:block;margin-bottom:16px}
+
+/* ORG CHART */
+.org{display:flex;flex-direction:column;align-items:center;gap:0}
+.org-box{border-radius:7px;padding:8px 14px;text-align:center;width:100%;max-width:220px}
+.ob-title{font-size:12px;font-weight:600;display:block;line-height:1.3}
+.ob-sub{font-size:10px;opacity:.8;display:block;margin-top:2px;line-height:1.4}
+.b-navy{background:#1a3a5c;color:#fff}
+.b-blue{background:#2563a8;color:#fff}
+.b-lblue{background:#4a9fd4;color:#fff}
+.b-sob{background:#3b7fc4;color:#fff}
+.b-green{background:#22795b;color:#fff}
+.b-dgreen{background:#1a5c3a;color:#fff}
+.b-exit{background:#fff8f0;color:#8b4513;border:1.5px dashed #d4956a}
+
+.conn{display:flex;flex-direction:column;align-items:center;margin:3px 0}
+.conn-line{width:1.5px;height:14px;background:#b0bec5}
+.conn-label{font-size:9px;color:#78909c;background:#f0f2f5;padding:0 4px;border-radius:2px;line-height:1.5}
+.conn-arrow{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #b0bec5}
+
+.split-row{display:flex;justify-content:center;gap:10px;width:100%}
+.split-col{display:flex;flex-direction:column;align-items:center}
+
+/* ASSET TABLE */
+.asset-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:11px}
+.asset-table th{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#90a4ae;padding:4px 8px;border-bottom:1px solid #e8ecf2;text-align:left}
+.asset-table td{padding:6px 8px;border-bottom:1px solid #f4f6fa;color:#37474f}
+.asset-table tr:last-child td{border-bottom:none}
+.asset-table .tgt{color:#22795b;font-weight:600}
+.asset-table .ext{color:#8b4513;font-weight:600}
+
+/* TIMELINE */
+.tl-grid{display:grid;grid-template-columns:130px repeat(6,1fr);font-size:11px;border-radius:8px;overflow:hidden;border:1px solid #e0e6ed}
+.tl-header{background:#1a3a5c;color:#fff;padding:8px 8px;font-size:9.5px;font-weight:600;text-align:center;border-right:1px solid rgba(255,255,255,.12)}
+.tl-header:first-child{text-align:left;padding-left:10px}
+.tl-cell{padding:8px 8px;border-right:1px solid #e8ecf2;border-bottom:1px solid #e8ecf2;font-size:10px;line-height:1.4;background:#fff;vertical-align:top;color:#37474f}
+.tl-cell:first-child{background:#f8fafc;font-weight:600;color:#1a3a5c;font-size:10px}
+.tl-cell.act{background:#edf5fb}
+.tl-row-last .tl-cell{border-bottom:none}
+.pill{display:inline-block;border-radius:3px;padding:2px 7px;font-size:9.5px;font-weight:700;margin-bottom:4px}
+.p-blue{background:#dbeafe;color:#1e3a8a}
+.p-green{background:#d1fae5;color:#065f46}
+.p-amber{background:#fef3c7;color:#78350f}
+.p-red{background:#fee2e2;color:#7f1d1d}
+.p-close{background:#1a3a5c;color:#fff}
+.tl-note{font-size:9px;color:#78909c;margin-top:2px}
+
+/* FLOWS */
+.flow-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #f4f6fa;font-size:11px;gap:8px}
+.flow-row:last-child{border-bottom:none}
+.fl{color:#546e7a;flex:1;line-height:1.4}
+.fa{font-weight:600;white-space:nowrap}
+.fa-pos{color:#22795b}
+.fa-neu{color:#37474f}
+.fa-neg{color:#c62828}
+.flow-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#90a4ae;margin:10px 0 4px}
+.flow-total{background:#1a3a5c;color:#fff;border-radius:5px;padding:6px 10px;display:flex;justify-content:space-between;margin-top:8px;font-size:11px;font-weight:600}
+.flow-note{font-size:9.5px;color:#90a4ae;font-style:italic;margin-top:6px;line-height:1.5;padding-top:6px;border-top:1px solid #f0f0f0}
+
+/* RISKS */
+.risk-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #f4f6fa;align-items:flex-start}
+.risk-item:last-child{border-bottom:none}
+.risk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.rd-high{background:#ef5350}
+.rd-med{background:#ff9800}
+.rd-low{background:#66bb6a}
+.risk-text{font-size:10.5px;color:#37474f;line-height:1.5}
+.risk-text strong{color:#1a3a5c;font-weight:600}
+
+/* FOOTER */
+.footer{margin-top:20px;background:#fff;border-radius:10px;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#90a4ae;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.footer strong{color:#546e7a}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>OPERATION H2O — TRANSACTION OVERVIEW</h1>
+    <p>Acquisition of Bâtard-Montrachet GC (4.50a) &amp; Montrachet GC (4.28a) via SCEA H2O<br>Vendor: Artémis Domaines (Groupe Artémis / Pinault family)</p>
+    <span class="conf-badge">STRICTLY CONFIDENTIAL — NOT FOR DISTRIBUTION</span>
+  </div>
+  <div class="header-right">
+    <div class="big">€ 14,200,000</div>
+    <div class="sm">Total investment · 16 investors</div>
+    <div class="sm">June 2026 → December 2026</div>
+  </div>
+</div>
+
+<!-- TOP ROW: Structure + Timeline -->
+<div class="grid-top">
+
+  <!-- LEFT: Final Legal Structure -->
+  <div class="card">
+    <span class="card-title">Final Legal Structure</span>
+    <div class="org">
+      <div class="org-box b-navy"><span class="ob-title">16 Investors</span><span class="ob-sub">€14.2M shareholders' current accounts</span></div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-label">100%</div><div class="conn-arrow"></div></div>
+      <div class="org-box b-blue"><span class="ob-title">SAS Montrachet</span><span class="ob-sub">Investors' Holding · Corporate tax (IS)</span></div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-label">95%</div><div class="conn-arrow"></div></div>
+
+      <div class="split-row">
+        <div class="split-col">
+          <div class="org-box b-lblue" style="max-width:180px"><span class="ob-title">SC Les Deux Montrachet</span><span class="ob-sub">Société Civile · pass-through<br>not subject to Corp. Tax</span></div>
+        </div>
+        <div class="split-col" style="justify-content:center;padding-top:16px">
+          <div style="font-size:9px;color:#78909c;margin-bottom:3px">5%</div>
+          <div class="org-box b-sob" style="max-width:130px"><span class="ob-title">Secrets of Burgundy</span><span class="ob-sub">Deal Originators</span></div>
+        </div>
+      </div>
+
+      <div class="conn" style="align-self:flex-start;margin-left:40px"><div class="conn-line"></div><div class="conn-label">100%</div><div class="conn-arrow"></div></div>
+      <div class="org-box b-green" style="align-self:flex-start;margin-left:10px;max-width:190px"><span class="ob-title">SCEA H2O</span><span class="ob-sub">Target Vineyards · agricultural co.</span></div>
+
+      <div class="split-row" style="margin-top:0;margin-left:10px">
+        <div class="split-col">
+          <div class="conn"><div class="conn-line"></div><div class="conn-label" style="font-size:8.5px">Métayage lease<br>25 yrs · 50/50</div><div class="conn-arrow"></div></div>
+          <div class="org-box b-dgreen" style="max-width:140px"><span class="ob-title">SAS DGV</span><span class="ob-sub">W. Kelley · winemaker</span></div>
+        </div>
+        <div class="split-col">
+          <div class="conn"><div class="conn-line" style="background:#d4956a"></div><div class="conn-label" style="color:#d4956a;font-size:8.5px">exit Nov 2026</div><div class="conn-arrow" style="border-top-color:#d4956a"></div></div>
+          <div class="org-box b-exit" style="max-width:140px"><span class="ob-title">Exit Vineyards</span><span class="ob-sub">Meursault + Chassagne<br>→ SCEA Perclos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asset perimeter -->
+    <table class="asset-table">
+      <thead><tr><th colspan="2">Final Asset Perimeter</th><th style="text-align:right">Area</th></tr></thead>
+      <tbody>
+        <tr><td class="tgt">✓ Target</td><td>Bâtard-Montrachet GC</td><td style="text-align:right;color:#546e7a">4.50 ares</td></tr>
+        <tr><td></td><td>Montrachet GC</td><td style="text-align:right;color:#546e7a">4.28 ares</td></tr>
+        <tr><td class="ext">→ Exit</td><td>Meursault 1er Cru Porusots</td><td style="text-align:right;color:#546e7a">8.11 ares</td></tr>
+        <tr><td></td><td>Chassagne-Montrachet Village</td><td style="text-align:right;color:#546e7a">23.67 ares</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RIGHT: Transaction Timeline -->
+  <div class="card">
+    <span class="card-title">Transaction Timeline</span>
+    <div style="overflow-x:auto">
+    <div class="tl-grid" style="min-width:600px">
+      <!-- Headers -->
+      <div class="tl-header" style="text-align:left">Step</div>
+      <div class="tl-header">By 22 Jun 2026</div>
+      <div class="tl-header">26–27 Jun 2026</div>
+      <div class="tl-header">Aug 2026</div>
+      <div class="tl-header">15–16 Oct 2026</div>
+      <div class="tl-header">30 Oct 2026</div>
+      <div class="tl-header">2 Nov – 1 Dec 2026</div>
+
+      <!-- Row 1 -->
+      <div class="tl-cell">Escrow &amp; Funds</div>
+      <div class="tl-cell act"><span class="pill p-blue">€14.2M</span><br>Investors → Escrow<br><span class="tl-note">BPBFC</span></div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 2 -->
+      <div class="tl-cell">Capital Contribution to SC LDM</div>
+      <div class="tl-cell"></div>
+      <div class="tl-cell act"><span class="pill p-blue">€12.7M</span><br>SAS Montrachet → SC LDM</div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 3 -->
+      <div class="tl-cell">Loan SC LDM → Perclos</div>
+      <div class="tl-cell"></div>
+      <div class="tl-cell act"><span class="pill p-amber">€7.4M</span><br>Loan 1% / yr<br><span class="tl-note">exp. 31/12/2026</span></div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 4 -->
+      <div class="tl-cell">Capital H2O + DGV Authorization</div>
+      <div class="tl-cell"></div>
+      <div class="tl-cell act"><span class="pill p-green">€1.0M</span><br>Perclos → H2O<br><span class="tl-note">16.39% stake</span></div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 5 -->
+      <div class="tl-cell">SAFER Notice</div>
+      <div class="tl-cell"></div><div class="tl-cell"></div>
+      <div class="tl-cell act">SAFER Notification<br>re. H2O share transfer (83.61%)<br><span class="tl-note">art. L.143-1 CRPM</span></div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 6 -->
+      <div class="tl-cell">Lease Termination</div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+      <div class="tl-cell act"><span class="pill p-red">€3.59M total</span><br>Indemnity to Domaine d'Eugénie<br><span class="tl-note">€3.4M (loan) + €188k (H2O treasury)<br>+ Shareholder cash advance of €2.4M</span></div>
+      <div class="tl-cell"></div><div class="tl-cell"></div>
+
+      <!-- Row 7 -->
+      <div class="tl-cell">H2O Transfer 83.61%</div>
+      <div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div><div class="tl-cell"></div>
+      <div class="tl-cell act"><span class="pill p-green">€5.1M</span><br>Artémis → SC LDM<br><span class="tl-note">art. 730 bis CGI</span></div>
+      <div class="tl-cell"></div>
+
+      <!-- Row 8 -->
+      <div class="tl-cell tl-row-last">Final Closing</div>
+      <div class="tl-cell tl-row-last"></div><div class="tl-cell tl-row-last"></div><div class="tl-cell tl-row-last"></div><div class="tl-cell tl-row-last"></div><div class="tl-cell tl-row-last"></div>
+      <div class="tl-cell tl-row-last act"><span class="pill p-close">CLOSING</span><br>Perclos exits<br><span class="tl-note">① SCEA H2O → SC LDM 100%<br>② SC LDM = sole shareholder<br>Start of métayage lease<br>Domaine du Grand Val / SAS L2M</span></div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM ROW: Use of Funds + Key Risks -->
+<div class="grid-bottom">
+
+  <!-- Use of Funds -->
+  <div class="card">
+    <span class="card-title">💰 Use of Funds — €14,200,000</span>
+
+    <div class="flow-section">Allocation</div>
+    <div class="flow-row"><span class="fl">SC Les Deux Montrachet capital contribution</span><span class="fa fa-pos">12,700,000 €</span></div>
+    <div class="flow-row"><span class="fl">Acquisition fees &amp; advisory</span><span class="fa fa-neg">1,059,800 €</span></div>
+    <div class="flow-row"><span class="fl">Working capital &amp; frost protection</span><span class="fa fa-neg">440,200 €</span></div>
+
+    <div class="flow-section">Use of funds by SC Les Deux Montrachet (from €12.7M)</div>
+    <div class="flow-row"><span class="fl" style="padding-left:14px">↳ H2O capital increase</span><span class="fa fa-neu">1,000,000 €</span></div>
+    <div class="flow-row"><span class="fl" style="padding-left:14px">↳ Current account advance</span><span class="fa fa-neu">2,400,000 €</span></div>
+    <div class="flow-row"><span class="fl" style="padding-left:14px">↳ Secured loan to Perclos (compensation vs loan at the exit of Perclos)</span><span class="fa fa-neu">4,000,000 €</span></div>
+    <div class="flow-row"><span class="fl">H2O acquisition — Artémis</span><span class="fa fa-neu">5,100,000 €</span></div>
+    <div class="flow-row"><span class="fl">Reserve for working capital — SC Les Deux Montrachet*</span><span class="fa fa-neu">200,000 €</span></div>
+    <p class="flow-note">* Reserve to cover unforeseen costs at SC Les Deux Montrachet level</p>
+  </div>
+
+  <!-- Key Risks -->
+  <div class="card">
+    <span class="card-title">⚠ Key Risks</span>
+    <div class="risk-item">
+      <div class="risk-dot rd-high"></div>
+      <div class="risk-text"><strong>VAT on termination indemnity</strong> — ~€680k recoverable but temporary cash need; retained from Perclos exit price pending recovery</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-dot rd-med"></div>
+      <div class="risk-text"><strong>SAFER challenge</strong> — successive operations may be contested as disguised full transfer; pre-consultation conducted by deal originators</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-dot rd-med"></div>
+      <div class="risk-text"><strong>Lease conversion to fermage</strong> — DGV right from year 3; after 8 years quasi-absolute right; mitigated by pre-agreed terms in initial lease</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-dot rd-med"></div>
+      <div class="risk-text"><strong>Registration duty risk</strong> — 5% instead of €125 flat fee if H2O requalified as property holding company (~€255k exposure); counsel views risk as limited</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-dot rd-low"></div>
+      <div class="risk-text"><strong>DGV share transfer to third party</strong> — lease survives ownership change in DGV; agrément clause on DGV associates strongly recommended</div>
+    </div>
+    <div class="risk-item">
+      <div class="risk-dot rd-low"></div>
+      <div class="risk-text"><strong>Capital gain tax on exit vineyards</strong> — PV charge falls on SC LDM investors at closing; cost mechanism to be recovered from Perclos exit price</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span><strong>Legal counsel:</strong> LEGASPHERE &amp; SELARL PATRIAT &amp; ASSOCIÉS (Dijon)</span>
+  <span><strong>Prepared by:</strong> Secrets of Burgundy SARL &nbsp;|&nbsp; June 2026</span>
+  <span style="color:#ef9a9a;font-weight:600">STRICTLY CONFIDENTIAL</span>
+</div>
+
+</div>
+</body>
+</html>
